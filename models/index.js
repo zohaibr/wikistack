@@ -1,31 +1,42 @@
 var Sequelize = require('sequelize');
+const validate = require('./validate');
 var db = new Sequelize('postgres://localhost:5432/wikistack', {
 		logging: false
 });
 
 var Page = db.define('page', {
-	title: {
-		type: 		Sequelize.STRING,
-		allowNull:  false
-	},
-	urlTitle: {
-		type: 		Sequelize.STRING,
-		allowNull:  false,
-		isUrl: 		true,
-	},
-	content: {
-		type: 		Sequelize.TEXT,
-		allowNull:  false
-	},
-	status: 		Sequelize.ENUM('open', 'closed'),
-	date: {
-		type: 		Sequelize.DATE,
-		defaultValue: Sequelize.NOW
-	}
+		title: {
+			type: 		Sequelize.STRING,
+			allowNull:  false
+		},
+
+		urlTitle: {
+			type: 		Sequelize.STRING,
+			allowNull:  false,
+			isUrl: 		true,
+		},
+
+		content: {
+			type: 		Sequelize.TEXT,
+			allowNull:  false
+		},
+
+		status: 		Sequelize.ENUM('open', 'closed'),
+
+		date: {
+			type: 		Sequelize.DATE,
+			defaultValue: Sequelize.NOW
+		}
 	}, {
-			getUrl:  {
-				siteUrl: function() { return this.getDataValue(`/wiki/${urlTitle}`);}
+		getUrl:  {
+			siteUrl: function() { return this.getDataValue(`/wiki/${urlTitle}`);}
+		},
+	}, {
+		hooks: {
+			beforeValidate: function(page, options) {
+				page.urlTitle = validate.generateUrlTitle(page.title);
 			}
+		}
 });
 
 var User = db.define('user', {
@@ -43,3 +54,4 @@ module.exports = {
 	Page: Page,
 	User: User
 };
+
