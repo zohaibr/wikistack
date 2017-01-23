@@ -28,10 +28,9 @@ var Page = db.define('page', {
 			defaultValue: Sequelize.NOW
 		}
 	}, {
-		getUrl:  {
-			siteUrl: function() { return this.getDataValue(`/wiki/${urlTitle}`);}
+		getterMethods:  {
+			route: function() { return '/wiki/' + this.getDataValue('urlTitle');}
 		},
-	}, {
 		hooks: {
 			beforeValidate: function(page, options) {
 				page.urlTitle = validate.generateUrlTitle(page.title);
@@ -54,4 +53,3 @@ module.exports = {
 	Page: Page,
 	User: User
 };
-
