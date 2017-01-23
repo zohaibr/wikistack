@@ -4,10 +4,11 @@ const express = require('express');
 const app = express();
 const volleyball = require('volleyball');
 const bodyParser = require('body-parser');
-const routes = require('./routes');
+//const routes = require('./routes');
 const nunjucks = require('nunjucks');
 const path = require('path');
 const models = require('./models');
+const wikiRouter = require('./routes/wiki');
 
 // templating boilerplate setup
 app.engine('html', nunjucks.render);
@@ -37,4 +38,5 @@ models.User.sync({})
 app.use(express.static(path.join(__dirname, '/public')));
 
 // modular routing that uses io inside it
-app.use('/', routes);
+app.use('/wiki', wikiRouter);
+//app.use('/', routes);
